@@ -76,8 +76,11 @@ def init_save_system_decorator(method):
     """Декоратор для инициализации системы сохранения в классе, применяется к методу __init__"""
     @wraps(method)
     def wrapper(self, *args, **kwargs):
+        if getattr(self, "id", None) is None:
+            raise ValueError("В классе должен быть уникальный атрибут id !!!")
+
         method(self, *args, **kwargs)
-        save_system = kwargs.get("save_system", SaveSystem())
+        save_system = SaveSystem()
         load_saved_obj_state(self, save_system)
         save_system.add_object(self)
     return wrapper
